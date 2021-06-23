@@ -4,7 +4,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import tr.com.kare.findit2me.icraservice.dto.IcraDto;
+import tr.com.kare.recommendation.dto.IcraDto;
 import tr.com.kare.recommendation.proxy.AdminServiceProxy;
 import tr.com.kare.servicecommon.dto.Notification;
 import tr.com.kare.servicecommon.dto.SistemParametreDto;
