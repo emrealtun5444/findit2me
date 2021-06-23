@@ -1,0 +1,118 @@
+version: '3.7'
+
+services:
+
+  account-service:
+    image: findit2me/ea-account-service:10.0.1
+    mem_limit: 700m
+    ports:
+      - "8100:8100"
+    networks:
+      - findit2me-network
+    depends_on:
+      - config-server
+      - naming-server
+      - rabbitmq
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
+      SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
+      RABBIT_URI: amqp://guest:guest@rabbitmq:5672
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_ZIPKIN_SENDER_TYPE: rabbit
+
+  notification-service:
+    image: findit2me/ea-notification-service:10.0.1
+    mem_limit: 700m
+    ports:
+      - "8300:8300"
+    networks:
+      - findit2me-network
+    depends_on:
+      - config-server
+      - naming-server
+      - rabbitmq
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
+      SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
+      RABBIT_URI: amqp://guest:guest@rabbitmq:5672
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_ZIPKIN_SENDER_TYPE: rabbit
+      
+  recommendation-service:
+    image: findit2me/ea-recommendation-service:10.0.1
+    mem_limit: 700m
+    ports:
+      - "8200:8200"
+    networks:
+      - findit2me-network
+    depends_on:
+      - config-server
+      - naming-server
+      - rabbitmq
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
+      SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
+      RABBIT_URI: amqp://guest:guest@rabbitmq:5672
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_ZIPKIN_SENDER_TYPE: rabbit
+
+  api-gateway:
+    image: findit2me/ea-api-gateway:10.0.1
+    mem_limit: 700m
+    ports:
+      - "8765:8765"
+    networks:
+      - findit2me-network
+    depends_on:
+      - naming-server
+      - rabbitmq
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
+      SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
+      RABBIT_URI: amqp://guest:guest@rabbitmq:5672
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_ZIPKIN_SENDER_TYPE: rabbit
+
+
+
+  config-server:
+    image: findit2me/ea-config-server:10.0.1
+    mem_limit: 700m
+    ports:
+      - "8888:8888"
+    networks:
+      - findit2me-network
+
+  naming-server:
+    image: findit2me/ea-naming-server:10.0.1
+    mem_limit: 700m
+    ports:
+      - "8761:8761"
+    networks:
+      - findit2me-network
+
+#docker run -p 9411:9411 openzipkin/zipkin:2.23
+
+  zipkin-server:
+    image: openzipkin/zipkin:2.23
+    mem_limit: 300m
+    ports:
+      - "9411:9411"
+    networks:
+      - findit2me-network
+    environment:
+      RABBIT_URI: amqp://guest:guest@rabbitmq:5672
+    depends_on:
+      - rabbitmq
+
+  rabbitmq:
+    image: rabbitmq:3.5.3-management
+    mem_limit: 300m
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - findit2me-network
+
+networks:
+  findit2me-network:

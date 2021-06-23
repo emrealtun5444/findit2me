@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  rabbitmq:
+    image: rabbitmq:management
+    ports:
+      - "5672:5672" #JMS Port
+      - "15672:15672" #Management Port - default user:pass = guest:guest
+  postgres:
+    image: 'postgres_tr:latest'
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=findit2me
+      - POSTGRES_USER=ealtun
+      - POSTGRES_PASSWORD=RAG48cag
+  zipkin-server:
+    image: openzipkin/zipkin:2.23
+    ports:
+      - "9411:9411"
